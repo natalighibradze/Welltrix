@@ -474,7 +474,7 @@
   }
   .form-error[hidden] { display: none; }
   .form-error a { color: inherit; font-weight: 600; }
-  .send-btn:disabled { opacity: 0.6; cursor: default; }
+  .send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
   .sales-form[hidden] { display: none; }
   .nav-cta .btn { background: rgba(20,200,169,0.1); border-color: var(--success); color: var(--text); }
   .nav-cta .btn:hover { background: rgba(20,200,169,0.2); border-color: var(--success); }
@@ -631,7 +631,7 @@
 
       <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
       <p class="form-error" id="contact-error" hidden>Sorry, we couldn't send your message. Please email us directly at <a href="mailto:info@welltrix.cc">info@welltrix.cc</a>.</p>
-      <button type="submit" class="send-btn">Send Message</button>
+      <button type="submit" class="send-btn" disabled>Send Message</button>
     </form>
 
     <div class="sales-confirm" id="contact-confirm" hidden>
@@ -646,6 +646,8 @@
     var form = document.getElementById("contact-form");
     var btn = form.querySelector(".send-btn");
     var err = document.getElementById("contact-error");
+    var consent = document.getElementById("contact-consent");
+    consent.addEventListener("change", function () { btn.disabled = !consent.checked; });
     function val(id) { return document.getElementById(id).value.trim(); }
     form.addEventListener("submit", function (e) {
       e.preventDefault();
