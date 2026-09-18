@@ -460,6 +460,19 @@
     max-width: 640px;
   }
   .sales-confirm[hidden] { display: none; }
+  .form-error {
+    background: rgba(220,38,38,0.08);
+    border: 1px solid rgba(220,38,38,0.3);
+    color: #b91c1c;
+    font-size: 13px;
+    line-height: 1.5;
+    padding: 12px 14px;
+    border-radius: 10px;
+    margin: 0;
+  }
+  .form-error[hidden] { display: none; }
+  .form-error a { color: inherit; font-weight: 600; }
+  .send-btn:disabled { opacity: 0.6; cursor: default; }
   .sales-form[hidden] { display: none; }
   .nav-cta .btn { background: rgba(20,200,169,0.1); border-color: var(--success); color: var(--text); }
   .nav-cta .btn:hover { background: rgba(20,200,169,0.2); border-color: var(--success); }
@@ -580,7 +593,7 @@
       <div class="field-row">
         <div class="field-group">
           <label for="contact-name">Name</label>
-          <input class="field-input" id="contact-name" type="text" placeholder="Jane Halden">
+          <input class="field-input" id="contact-name" type="text" required placeholder="Jane Halden">
         </div>
         <div class="field-group">
           <label for="contact-company">Company (if applicable)</label>
@@ -601,19 +614,21 @@
 
       <div class="field-group">
         <label for="contact-email">Email</label>
-        <input class="field-input" id="contact-email" type="email" placeholder="you@email.com">
+        <input class="field-input" id="contact-email" type="email" required placeholder="you@email.com">
       </div>
 
       <div class="field-group">
         <label for="contact-message">Message</label>
-        <textarea class="field-input" id="contact-message" placeholder="Tell us what you're looking for."></textarea>
+        <textarea class="field-input" id="contact-message" required placeholder="Tell us what you're looking for."></textarea>
       </div>
 
       <label class="consent-row">
-        <input type="checkbox" id="contact-consent">
+        <input type="checkbox" id="contact-consent" required>
         <span>By ticking this box, you agree that you have read and accept the <a href="/privacy-policy">Privacy Policy</a> and <a href="/terms-of-service">Terms of Service</a>, and you consent to Welltrix using the information you've provided to contact you.</span>
       </label>
 
+      <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <p class="form-error" id="contact-error" hidden>Sorry, we couldn't send your message. Please email us directly at <a href="mailto:info@welltrix.cc">info@welltrix.cc</a>.</p>
       <button type="submit" class="send-btn">Send Message</button>
     </form>
 
@@ -626,10 +641,42 @@
 
 <script>
   (function () {
-    document.getElementById("contact-form").addEventListener("submit", function (e) {
+    var form = document.getElementById("contact-form");
+    var btn = form.querySelector(".send-btn");
+    var err = document.getElementById("contact-error");
+    function val(id) { return document.getElementById(id).value.trim(); }
+    form.addEventListener("submit", function (e) {
       e.preventDefault();
-      document.getElementById("contact-form").hidden = true;
-      document.getElementById("contact-confirm").hidden = false;
+      err.hidden = true;
+      btn.disabled = true;
+      btn.textContent = "Sending...";
+      var payload = {
+        "Name": val("contact-name"),
+        "Company": val("contact-company"),
+        "Client type": val("contact-type"),
+        "email": val("contact-email"),
+        "Message": val("contact-message"),
+        "_subject": "New Welltrix contact message",
+        "_template": "table",
+        "_honey": form.querySelector('[name="_honey"]').value
+      };
+      fetch("https://formsubmit.co/ajax/info@welltrix.cc", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify(payload)
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (d.success === true || d.success === "true") {
+            form.hidden = true;
+            document.getElementById("contact-confirm").hidden = false;
+          } else { throw new Error("send failed"); }
+        })
+        .catch(function () {
+          err.hidden = false;
+          btn.disabled = false;
+          btn.textContent = "Send Message";
+        });
     });
   })();
 </script>

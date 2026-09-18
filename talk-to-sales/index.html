@@ -449,6 +449,19 @@
     max-width: 640px;
   }
   .sales-confirm[hidden] { display: none; }
+  .form-error {
+    background: rgba(220,38,38,0.08);
+    border: 1px solid rgba(220,38,38,0.3);
+    color: #b91c1c;
+    font-size: 13px;
+    line-height: 1.5;
+    padding: 12px 14px;
+    border-radius: 10px;
+    margin: 0;
+  }
+  .form-error[hidden] { display: none; }
+  .form-error a { color: inherit; font-weight: 600; }
+  .send-btn:disabled { opacity: 0.6; cursor: default; }
   .sales-form[hidden] { display: none; }
   .nav-cta .btn { background: rgba(20,200,169,0.1); border-color: var(--success); color: var(--text); }
   .nav-cta .btn:hover { background: rgba(20,200,169,0.2); border-color: var(--success); }
@@ -568,8 +581,19 @@
     <form class="sales-form" id="sales-form">
       <div class="field-row">
         <div class="field-group">
+          <label for="contact-person">Your name</label>
+          <input class="field-input" id="contact-person" type="text" required placeholder="Jane Halden">
+        </div>
+        <div class="field-group">
+          <label for="work-email">Work email</label>
+          <input class="field-input" id="work-email" type="email" required placeholder="jane@acme.com">
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-group">
           <label for="company-name">Company name</label>
-          <input class="field-input" id="company-name" type="text" placeholder="Acme Inc.">
+          <input class="field-input" id="company-name" type="text" required placeholder="Acme Inc.">
         </div>
         <div class="field-group">
           <label for="company-type">Company type</label>
@@ -597,6 +621,8 @@
         <textarea class="field-input" id="message" placeholder="Tell us anything else that would help us prepare."></textarea>
       </div>
 
+      <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <p class="form-error" id="sales-error" hidden>Sorry, we couldn't send your request. Please email us directly at <a href="mailto:info@welltrix.cc">info@welltrix.cc</a>.</p>
       <button type="submit" class="send-btn">Send</button>
     </form>
 
@@ -617,10 +643,44 @@
       });
     });
 
-    document.getElementById("sales-form").addEventListener("submit", function (e) {
+    var form = document.getElementById("sales-form");
+    var btn = form.querySelector(".send-btn");
+    var err = document.getElementById("sales-error");
+    function val(id) { return document.getElementById(id).value.trim(); }
+    form.addEventListener("submit", function (e) {
       e.preventDefault();
-      document.getElementById("sales-form").hidden = true;
-      document.getElementById("sales-confirm").hidden = false;
+      err.hidden = true;
+      btn.disabled = true;
+      btn.textContent = "Sending...";
+      var payload = {
+        "Name": val("contact-person"),
+        "email": val("work-email"),
+        "Company": val("company-name"),
+        "Company type": val("company-type"),
+        "Number of employees": val("employee-count"),
+        "Plan of interest": planRow.querySelector(".opt-pill.active").textContent.trim(),
+        "Message": val("message"),
+        "_subject": "New Welltrix sales inquiry",
+        "_template": "table",
+        "_honey": form.querySelector('[name="_honey"]').value
+      };
+      fetch("https://formsubmit.co/ajax/info@welltrix.cc", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify(payload)
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (d.success === true || d.success === "true") {
+            form.hidden = true;
+            document.getElementById("sales-confirm").hidden = false;
+          } else { throw new Error("send failed"); }
+        })
+        .catch(function () {
+          err.hidden = false;
+          btn.disabled = false;
+          btn.textContent = "Send";
+        });
     });
   })();
 </script>
