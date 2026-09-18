@@ -621,7 +621,7 @@
         <textarea class="field-input" id="message" placeholder="Tell us anything else that would help us prepare."></textarea>
       </div>
 
-      <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
       <p class="form-error" id="sales-error" hidden>Sorry, we couldn't send your request. Please email us directly at <a href="mailto:info@welltrix.cc">info@welltrix.cc</a>.</p>
       <button type="submit" class="send-btn">Send</button>
     </form>
@@ -661,17 +661,16 @@
         "Plan of interest": planRow.querySelector(".opt-pill.active").textContent.trim(),
         "Message": val("message"),
         "_subject": "New Welltrix sales inquiry",
-        "_template": "table",
-        "_honey": form.querySelector('[name="_honey"]').value
+        "_gotcha": form.querySelector('[name="_gotcha"]').value
       };
-      fetch("https://formsubmit.co/ajax/info@welltrix.cc", {
+      fetch("https://formspree.io/f/mdekkyav", {
         method: "POST",
         headers: { "Content-Type": "application/json", "Accept": "application/json" },
         body: JSON.stringify(payload)
       })
-        .then(function (r) { return r.json(); })
-        .then(function (d) {
-          if (d.success === true || d.success === "true") {
+        .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, data: d }; }); })
+        .then(function (res) {
+          if (res.ok) {
             form.hidden = true;
             document.getElementById("sales-confirm").hidden = false;
           } else { throw new Error("send failed"); }
