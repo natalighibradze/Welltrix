@@ -207,6 +207,32 @@
   .page-hero p.lede { max-width: 56ch; font-size: 17px; line-height: 1.6; color: var(--text-soft); margin: 18px 0 0; }
 
   .filter-section { padding-block: 8px 80px; }
+
+  .roi-section { padding-block: 8px 72px; border-top: 1px solid var(--line-soft); }
+  .roi-section .eyebrow { display: block; margin-bottom: 14px; color: #4f8bff; }
+  .roi-section h2 { font-size: clamp(24px, 3vw, 32px); max-width: 20ch; margin: 0 0 14px; }
+  .roi-section p.lede { max-width: 62ch; font-size: 16px; line-height: 1.6; color: var(--text-soft); margin: 0 0 36px; }
+  .roi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .roi-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 24px 20px;
+  }
+  .roi-card .roi-num {
+    font-family: "Fraunces", Georgia, serif;
+    font-size: clamp(28px, 3vw, 34px);
+    font-weight: 600;
+    color: var(--success-ink);
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+  .roi-card p { font-size: 14px; line-height: 1.55; color: var(--text-soft); margin: 0; }
+  .roi-note { margin-top: 24px; font-size: 13px; line-height: 1.6; color: var(--text-soft); max-width: 70ch; }
+  .roi-note a { color: var(--text); text-decoration: underline; text-decoration-color: var(--line); }
+  @media (max-width: 860px) {
+    .roi-grid { grid-template-columns: repeat(2, 1fr); }
+  }
   .filter-row { display: flex; gap: 10px; margin: 28px 0 32px; flex-wrap: wrap; }
   .filter-pill {
     font-family: "Archivo", sans-serif;
@@ -613,6 +639,33 @@
       </div>
     </div>
     <p class="grid-note">Showing example instructors across sample office locations so you can see how matching works. Contact sales to see instructors matched to your company's real offices and headcount.</p>
+  </div>
+</section>
+
+<section class="roi-section">
+  <div class="wrap">
+    <span class="eyebrow">Why it pays off</span>
+    <h2>The business case for team wellness</h2>
+    <p class="lede">A wellness stipend is easy to cut when budgets tighten. The research on what these programs actually return is worth knowing before that conversation comes up.</p>
+    <div class="roi-grid">
+      <div class="roi-card">
+        <div class="roi-num">~$6 back</div>
+        <p>per $1 spent, combining medical cost savings and reduced absenteeism, according to research widely cited in workplace wellness studies.</p>
+      </div>
+      <div class="roi-card">
+        <div class="roi-num">25&ndash;30%</div>
+        <p>lower absenteeism reported by companies after rolling out a wellness program, across several workplace studies.</p>
+      </div>
+      <div class="roi-card">
+        <div class="roi-num">34%</div>
+        <p>more likely to stay with their employer: how much more likely employees in strong wellness programs are to stick around.</p>
+      </div>
+      <div class="roi-card">
+        <div class="roi-num">56%</div>
+        <p>higher engagement reported by employees who actually participate in a robust wellness program, versus those who don't.</p>
+      </div>
+    </div>
+    <p class="roi-note">Worth being honest about the timeline: most research puts the full return on a wellness program at 3&ndash;5 years, not the first quarter, since it depends on real behavior change, not just enrollment. And the biggest gap in most programs isn't the ROI, it's usage: broadly, only about a third of employees with access to a wellness benefit actually use it. That's the part a program like Welltrix, recurring, scheduled, matched to real instructors, is built to close.</p>
   </div>
 </section>
 
